@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item  android:state_pressed="true" android:bottom="1dp" android:left="1dp" android:right="1dp" android:top="1dp">
+        <shape  >
+            <solid android:color="@color/colorButtonClick" />
+            <size
+                android:width="50dp"
+                android:height="50dp"/>
+
+            <!--设置角的弧度-->
+            <corners android:radius="10dip" />
+            <!--设置边框以及弧度-->
+            <stroke
+                android:width="0dp"
+                android:background="@null" />
+        </shape>
+    </item>
+
+    <item android:bottom="1dp" android:left="1dp" android:right="1dp" android:top="1dp">
+        <shape >
+            <solid android:color="@color/colorButton" />
+            <size
+                android:width="50dp"
+                android:height="50dp"/>
+            <!--设置角的弧度-->
+            <corners android:radius="10dip" />
+            <!--设置边框以及弧度-->
+            <stroke
+                android:width="0dp"
+                android:background="@null" />
+        </shape>
+    </item>
+
+
+</selector>

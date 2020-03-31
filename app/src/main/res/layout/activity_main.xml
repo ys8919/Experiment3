@@ -17,8 +17,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.023"
-        app:srcCompat="@drawable/picture_icon_camera"
-        tools:srcCompat="@drawable/picture_icon_camera" />
+        app:srcCompat="@drawable/ic_camera"
+        tools:srcCompat="@drawable/ic_camera" />
 
     <TextView
         android:id="@+id/textView"
@@ -40,7 +40,7 @@
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.033"
+        app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toEndOf="@+id/textView4"
         app:layout_constraintTop_toBottomOf="@+id/TextName"
         app:layout_constraintVertical_bias="0.0">
@@ -95,7 +95,7 @@
         android:entries="@array/plantes_04"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.019"
+        app:layout_constraintHorizontal_bias="0.148"
         app:layout_constraintStart_toEndOf="@id/textView1"
         app:layout_constraintTop_toBottomOf="@+id/TextName"
         app:layout_constraintVertical_bias="0.07" />

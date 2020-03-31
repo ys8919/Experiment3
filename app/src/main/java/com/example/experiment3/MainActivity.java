@@ -1,7 +1,12 @@
 package com.example.experiment3;
 
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.icu.util.Calendar;
+import android.os.Build;
 import android.os.Environment;
 
 import android.os.Bundle;
@@ -10,9 +15,16 @@ import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -32,12 +44,14 @@ import com.luck.picture.lib.config.PictureMimeType;
 import com.luck.picture.lib.entity.LocalMedia;
 
 import java.io.File;
-
+import java.text.DateFormat;
+import java.util.Locale;
 
 
 import static com.luck.picture.lib.config.PictureMimeType.ofImage;
 
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ImageView img_face;
@@ -53,28 +67,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     TextInputLayout layoutTextEmail;
     TextInputLayout layoutTextAddress;
     TextInputLayout layoutTextDetailAddress;
-
+    TextInputLayout layoutTextDate;
+    Button button;
     private EditText TextName;
     private EditText TextID;
     private EditText TextEmail;
     private EditText TextAddress;
     private EditText  TextDetailAddress;
+    private EditText  TextDate;
+    private Spinner spinner1;
 //地址选择
     CityPickerView mPicker=new CityPickerView();
+    //日期选择
+    DateFormat format= DateFormat.getDateTimeInstance();
+    Calendar calendar= Calendar.getInstance(Locale.CHINA);
+    //民族选择
+    //将可选内容与ArrayAdapter连接起来
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //禁止横屏
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         layoutTextName=findViewById(R.id.TextName);
         layoutTextID=findViewById(R.id.TextID);
         layoutTextEmail=findViewById(R.id.TextEmail);
         layoutTextAddress=findViewById(R.id.TextAddress);
         layoutTextDetailAddress=findViewById(R.id.TextDetailAddress);
+        layoutTextDate=findViewById(R.id.TextDate);
 
-        img_face = (ImageView) findViewById(R.id.img_face);
-        img_face.setOnClickListener(this);
+
+        img_face =findViewById(R.id.img_face);
+        img_face.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPicSeleDialog(MainActivity.this);
+            }
+        });
 
         //地址选择
         mPicker.init(this);
@@ -90,10 +121,66 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        //日期选择
+        TextDate = layoutTextDate.getEditText();
+        TextDate.setFocusableInTouchMode(false);//不可编辑
+        TextDate.setKeyListener(null);//不可粘贴，长按不会弹出粘贴框
+        TextDate.setFocusable(false);//不可编辑
+
+        TextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDatePickerDialog(MainActivity.this,  7, TextDate, calendar);
+        }
+        });
         //输入限制
         initView();
 
+        //民族选择
+        //设置下拉列表的风格
+        spinner1 = (Spinner) findViewById(R.id.spinner1);
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(MainActivity.this, R.array.plantes_04, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        //将adapter2 添加到spinner中
+        spinner1.setAdapter(adapter);
+        //设置默认值
+        spinner1.setVisibility(View.VISIBLE);
 
+    //提交按钮
+        button=findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                Toast toast = new Toast(MainActivity.this);
+                Toast toast1 = toast.makeText(MainActivity.this, "信息提交成功", Toast.LENGTH_LONG);
+                toast1.show();
+            }
+        });
+    }
+
+    /**
+     * 日期选择
+     * @param activity
+     * @param themeResId
+     * @param TextDate
+     * @param calendar
+     */
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public static void showDatePickerDialog(Activity activity, int themeResId, final EditText TextDate, Calendar calendar) {
+        // 直接创建一个DatePickerDialog对话框实例，并将它显示出来
+        new DatePickerDialog(activity, themeResId, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                TextDate.setText( year + "年" + (month + 1) + "月" + dayOfMonth + "日");
+            }
+
+            // 绑定监听器(How the parent is notified that the date is set.)
+        }
+                // 设置初始日期
+                , calendar.get(Calendar.YEAR)
+                , calendar.get(Calendar.MONTH)
+                , calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     //地址选择
@@ -221,11 +308,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      *                     // 如果裁剪并压缩了，以取压缩路径为准，因为是先裁剪后压缩的
      *
      */
-    protected void showPicSeleDialog() {
+    protected void showPicSeleDialog(Activity activity) {
         // 进入相册 以下是例子：不需要的api可以不写
-        PictureSelector.create(MainActivity.this)
-                .openGallery(PictureMimeType.ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
-                .loadImageEngine(GlideEngine.createGlideEngine())
+        PictureSelector.create(activity)
+                .openGallery(ofImage())// 全部.PictureMimeType.ofAll()、图片.ofImage()、视频.ofVideo()、音频.ofAudio()
                 .theme(R.style.picture_default_style)// 主题样式设置 具体参考 values/styles   用法：R.style.picture.white.style
                 .maxSelectNum(1)// 最大图片选择数量
                 .selectionMode( PictureConfig.SINGLE)// 多选 or 单选
@@ -238,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 //.sizeMultiplier(0.5f)// glide 加载图片大小 0~1之间 如设置 .glideOverride()无效
                 .glideOverride(160, 160)// glide 加载宽高，越小图片列表越流畅，但会影响列表图片浏览的清晰度
                 .forResult(PictureConfig.CHOOSE_REQUEST);//结果回调onActivityResult code
+
     }
 
 
@@ -271,7 +358,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-
     // 压缩后图片文件存储位置
     private String getCompressPath() {
         String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PictureSelector/image/";
@@ -287,11 +373,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.img_face:
-                //弹出拍照，照片弹窗
-                showPicSeleDialog();
-                break;
-        }
+
     }
 }
