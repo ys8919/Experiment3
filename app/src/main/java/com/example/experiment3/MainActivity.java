@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //禁止横屏
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+
         layoutTextName=findViewById(R.id.TextName);
         layoutTextID=findViewById(R.id.TextID);
         layoutTextEmail=findViewById(R.id.TextEmail);
